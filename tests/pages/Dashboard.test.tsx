@@ -107,6 +107,40 @@ describe('Dashboard', () => {
     console.log('  Dashboard : all stat card labels rendered');
   });
 
+  it('renders pull request cards with values from the report', async () => {
+    renderDashboard();
+
+    await waitFor(() => {
+      expect(screen.getByText('Total Pull Requests')).toBeDefined();
+    });
+    expect(screen.getByText('Open')).toBeDefined();
+    expect(screen.getByText('Merged')).toBeDefined();
+    expect(screen.getByText('Closed')).toBeDefined();
+
+    expect(screen.getByText('693')).toBeDefined();
+    expect(screen.getByText('78')).toBeDefined();
+    expect(screen.getByText('583')).toBeDefined();
+    expect(screen.getByText('32')).toBeDefined();
+    console.log('  Dashboard : PR cards show 693 total, 78 open, 583 merged, 32 closed');
+  });
+
+  it('omits the pull request cards when the report has no pullRequests block', async () => {
+    const { pullRequests, ...withoutPRs } = mockReport;
+    void pullRequests;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve(withoutPRs) }))
+    );
+
+    renderDashboard();
+
+    await waitFor(() => {
+      expect(screen.getByText('Total Plugins')).toBeDefined();
+    });
+    expect(screen.queryByText('Total Pull Requests')).toBeNull();
+    console.log('  Dashboard : no PR cards when the report omits pullRequests');
+  });
+
   it('renders data freshness banner', async () => {
     renderDashboard();
 
