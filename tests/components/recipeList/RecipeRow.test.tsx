@@ -268,7 +268,7 @@ describe('RecipeRow — general', () => {
     console.log(`  RecipeRow  : ChevronRight navigate arrow present`);
   });
 
-  it('self-consistent mock: computeSuccessRate matches successCount / totalApplications', () => {
+  it('self-consistent mock: every application has an outcome, so the rate matches successCount / totalApplications', () => {
     for (const r of [highRateRecipe, mediumRateRecipe, lowRateRecipe, noDataRecipe]) {
       const expected = r.totalApplications > 0 ? (r.successCount / r.totalApplications) * 100 : 0;
       expect(computeSuccessRate(r)).toBeCloseTo(expected, 5);

@@ -135,10 +135,10 @@ describe('RecipeDetail', () => {
     expect(failedBox.textContent).toContain('Failed');
 
     const rateBox = screen.getByTestId('stat-rate');
-    expect(rateBox.textContent).toContain('84.6%');
+    expect(rateBox.textContent).toContain('91.7%');
     expect(rateBox.textContent).toContain('Rate');
 
-    console.log('  RecipeDetail : stat boxes show total=13, success=11, failed=1, rate=84.6%');
+    console.log('  RecipeDetail : stat boxes show total=13, success=11, failed=1, rate=91.7%');
   });
 
   it('renders SuccessRateBadge with correct tier', async () => {
@@ -147,9 +147,9 @@ describe('RecipeDetail', () => {
     renderRecipeDetail();
 
     await waitFor(() => {
-      expect(screen.getByText('High (84.6%)')).toBeDefined();
+      expect(screen.getByText('High (91.7%)')).toBeDefined();
     });
-    console.log('  RecipeDetail : SuccessRateBadge shows "High (84.6%)"');
+    console.log('  RecipeDetail : SuccessRateBadge shows "High (91.7%)"');
   });
 
   it('renders charts section', async () => {

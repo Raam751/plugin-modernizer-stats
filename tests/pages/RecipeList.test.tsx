@@ -61,9 +61,10 @@ const mockRecipes: RecipeReport[] = [
     { pluginName: 'appscan', status: 'success', timestamp: '2025-10-03T18-22-33' },
     { pluginName: 'absint-a3', status: 'success', timestamp: '2025-09-02T14-22-13' },
   ]),
-  recipe('io.jenkins.tools.pluginmodernizer.UpgradeBomVersion', 4, 3, 0, [
-    { pluginName: 'pipeline-lib-oras', status: 'success', timestamp: '2025-08-30T13-03-41' },
-    { pluginName: 'pipeline-cps-oras', status: 'success', timestamp: '2025-08-30T13-01-25' },
+  recipe('io.jenkins.tools.pluginmodernizer.UpgradeNextMajorParentVersion', 122, 44, 32, [
+    { pluginName: 'katalon', status: 'success', timestamp: '2025-09-05T14-25-26' },
+    { pluginName: 'artifact-promotion', status: 'fail', timestamp: '2025-10-30T12-18-45' },
+    { pluginName: 'blackduck-security-scan', status: '', timestamp: '2025-06-19T20-39-50' },
   ]),
   recipe('io.jenkins.tools.pluginmodernizer.MigrateToJUnit5', 6, 1, 4, [
     { pluginName: 'pipeline-multibranch-defaults', status: 'fail', timestamp: '2025-10-05T13-47-45' },
@@ -110,7 +111,7 @@ describe('RecipeList', () => {
     });
 
     expect(screen.getByText('SetupDependabot')).toBeDefined();
-    expect(screen.getByText('UpgradeBomVersion')).toBeDefined();
+    expect(screen.getByText('UpgradeNextMajorParentVersion')).toBeDefined();
     expect(screen.getByText('MigrateToJUnit5')).toBeDefined();
     expect(screen.getByText('SetupJenkinsfile')).toBeDefined();
     expect(screen.getByText('5 total')).toBeDefined();
@@ -134,12 +135,12 @@ describe('RecipeList', () => {
     expect(screen.queryByText('AddCodeOwner')).toBeNull();
     expect(screen.queryByText('SetupDependabot')).toBeNull();
     expect(screen.queryByText('SetupJenkinsfile')).toBeNull();
-    expect(screen.queryByText('UpgradeBomVersion')).toBeNull();
+    expect(screen.queryByText('UpgradeNextMajorParentVersion')).toBeNull();
     console.log(`  mock data    : search="JUNIT"`);
     console.log(`  RecipeList   : only MigrateToJUnit5 visible`);
   });
 
-  it('filters recipes by "High Rate" tier (AddCodeOwner 84.62%, SetupDependabot 81.82%)', async () => {
+  it('filters recipes by "High Rate" tier (AddCodeOwner 91.67%, SetupDependabot 90%)', async () => {
     mockClient.getAllRecipes.mockResolvedValue({ ok: true, data: mockRecipes });
 
     renderRecipeList();
@@ -154,11 +155,11 @@ describe('RecipeList', () => {
 
     expect(screen.getByText('AddCodeOwner')).toBeDefined();
     expect(screen.getByText('SetupDependabot')).toBeDefined();
-    expect(screen.queryByText('UpgradeBomVersion')).toBeNull();
+    expect(screen.queryByText('UpgradeNextMajorParentVersion')).toBeNull();
     expect(screen.queryByText('MigrateToJUnit5')).toBeNull();
     expect(screen.queryByText('SetupJenkinsfile')).toBeNull();
     console.log(`  mock data    : tier filter="High Rate" (>=80%)`);
-    console.log(`  RecipeList   : AddCodeOwner (84.62%) + SetupDependabot (81.82%) visible`);
+    console.log(`  RecipeList   : AddCodeOwner (91.67%) + SetupDependabot (90%) visible`);
   });
 
   it('shows ErrorBanner on error', async () => {
@@ -236,14 +237,14 @@ describe('RecipeList', () => {
     const highCard = screen.getAllByText('High Rate').find((el) => el.closest('button'));
     fireEvent.click(highCard!);
 
-    expect(screen.queryByText('UpgradeBomVersion')).toBeNull();
+    expect(screen.queryByText('UpgradeNextMajorParentVersion')).toBeNull();
     expect(screen.queryByText('MigrateToJUnit5')).toBeNull();
     expect(screen.queryByText('SetupJenkinsfile')).toBeNull();
 
     fireEvent.click(highCard!);
 
     await waitFor(() => {
-      expect(screen.getByText('UpgradeBomVersion')).toBeDefined();
+      expect(screen.getByText('UpgradeNextMajorParentVersion')).toBeDefined();
     });
     expect(screen.getByText('AddCodeOwner')).toBeDefined();
     expect(screen.getByText('SetupDependabot')).toBeDefined();
@@ -268,14 +269,14 @@ describe('RecipeList', () => {
     expect(screen.getByText('SetupDependabot')).toBeDefined();
     expect(screen.queryByText('MigrateToJUnit5')).toBeNull();
     expect(screen.queryByText('SetupJenkinsfile')).toBeNull();
-    expect(screen.queryByText('UpgradeBomVersion')).toBeNull();
+    expect(screen.queryByText('UpgradeNextMajorParentVersion')).toBeNull();
 
     const searchInput = screen.getByPlaceholderText('Search a recipe…');
     fireEvent.change(searchInput, { target: { value: 'Dependabot' } });
 
     expect(screen.getByText('SetupDependabot')).toBeDefined();
     expect(screen.queryByText('AddCodeOwner')).toBeNull();
-    console.log(`  RecipeList   : tier=high + search="Dependabot" -> only SetupDependabot (81.82%)`);
+    console.log(`  RecipeList   : tier=high + search="Dependabot" -> only SetupDependabot (90%)`);
   });
 
   it('sorts recipes by name A-Z by default', async () => {
@@ -293,11 +294,11 @@ describe('RecipeList', () => {
     const migrateIdx = rows.indexOf('MigrateToJUnit5');
     const depIdx = rows.indexOf('SetupDependabot');
     const jenkinsIdx = rows.indexOf('SetupJenkinsfile');
-    const bomIdx = rows.indexOf('UpgradeBomVersion');
+    const upgradeIdx = rows.indexOf('UpgradeNextMajorParentVersion');
     expect(addIdx).toBeLessThan(migrateIdx);
     expect(migrateIdx).toBeLessThan(depIdx);
     expect(depIdx).toBeLessThan(jenkinsIdx);
-    expect(jenkinsIdx).toBeLessThan(bomIdx);
+    expect(jenkinsIdx).toBeLessThan(upgradeIdx);
     console.log(`  RecipeList   : default sort is Name A-Z (Add < Migrate < SetupDep < SetupJenk < Upgrade)`);
   });
 
@@ -337,7 +338,7 @@ describe('RecipeList', () => {
     console.log(`  RecipeList   : "Clear filters" resets search and tier filter`);
   });
 
-  it('filters by "Low Rate" tier (SetupJenkinsfile 16.35%, MigrateToJUnit5 16.67%)', async () => {
+  it('filters by "Low Rate" tier (SetupJenkinsfile 16.35%, MigrateToJUnit5 20%)', async () => {
     mockClient.getAllRecipes.mockResolvedValue({ ok: true, data: mockRecipes });
 
     renderRecipeList();
@@ -354,12 +355,12 @@ describe('RecipeList', () => {
     expect(screen.getByText('SetupJenkinsfile')).toBeDefined();
     expect(screen.queryByText('AddCodeOwner')).toBeNull();
     expect(screen.queryByText('SetupDependabot')).toBeNull();
-    expect(screen.queryByText('UpgradeBomVersion')).toBeNull();
+    expect(screen.queryByText('UpgradeNextMajorParentVersion')).toBeNull();
     console.log(`  mock data    : tier filter="Low Rate" (<50%)`);
-    console.log(`  RecipeList   : MigrateToJUnit5 (16.67%) + SetupJenkinsfile (16.35%) visible`);
+    console.log(`  RecipeList   : MigrateToJUnit5 (20%) + SetupJenkinsfile (16.35%) visible`);
   });
 
-  it('filters by "Medium Rate" tier (UpgradeBomVersion 75%)', async () => {
+  it('filters by "Medium Rate" tier (UpgradeNextMajorParentVersion 57.89%)', async () => {
     mockClient.getAllRecipes.mockResolvedValue({ ok: true, data: mockRecipes });
 
     renderRecipeList();
@@ -372,13 +373,13 @@ describe('RecipeList', () => {
     expect(medCard).toBeDefined();
     fireEvent.click(medCard!);
 
-    expect(screen.getByText('UpgradeBomVersion')).toBeDefined();
+    expect(screen.getByText('UpgradeNextMajorParentVersion')).toBeDefined();
     expect(screen.queryByText('AddCodeOwner')).toBeNull();
     expect(screen.queryByText('SetupDependabot')).toBeNull();
     expect(screen.queryByText('MigrateToJUnit5')).toBeNull();
     expect(screen.queryByText('SetupJenkinsfile')).toBeNull();
     console.log(`  mock data    : tier filter="Medium Rate" (50-79%)`);
-    console.log(`  RecipeList   : only UpgradeBomVersion (75%) visible`);
+    console.log(`  RecipeList   : only UpgradeNextMajorParentVersion (75%) visible`);
   });
 
   it('handles real-world totalApplications != successCount + failureCount', async () => {

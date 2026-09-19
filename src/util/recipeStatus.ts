@@ -1,9 +1,15 @@
-import type { RecipeReport } from '../types';
-
 export type RateTier = 'high' | 'medium' | 'low';
 
-export function computeSuccessRate(recipe: RecipeReport): number {
-  return recipe.totalApplications > 0 ? (recipe.successCount / recipe.totalApplications) * 100 : 0;
+/**
+ * Success rate of a recipe, as a percentage of the applications that recorded an outcome.
+ *
+ * Applications with neither a success nor a failure are excluded from the denominator.
+ * `migrationStatus` was only added to the metadata in June 2025, so older records carry no
+ * outcome at all and counting them as failures would understate the recipe.
+ */
+export function computeSuccessRate(recipe: { successCount: number; failureCount: number }): number {
+  const completed = recipe.successCount + recipe.failureCount;
+  return completed > 0 ? (recipe.successCount / completed) * 100 : 0;
 }
 
 /**
