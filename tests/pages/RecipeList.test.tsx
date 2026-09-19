@@ -379,7 +379,7 @@ describe('RecipeList', () => {
     expect(screen.queryByText('MigrateToJUnit5')).toBeNull();
     expect(screen.queryByText('SetupJenkinsfile')).toBeNull();
     console.log(`  mock data    : tier filter="Medium Rate" (50-79%)`);
-    console.log(`  RecipeList   : only UpgradeNextMajorParentVersion (75%) visible`);
+    console.log(`  RecipeList   : only UpgradeNextMajorParentVersion (57.89%) visible`);
   });
 
   it('handles real-world totalApplications != successCount + failureCount', async () => {

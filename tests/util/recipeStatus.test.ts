@@ -78,8 +78,7 @@ describe('computeSuccessRate', () => {
   });
 
   it('excludes applications with no recorded outcome from the denominator', () => {
-    // Shape of UpgradeNextMajorParentVersion in the published report: 122 applications,
-    // only 76 of which carry an outcome. The rest predate migrationStatus.
+    // UpgradeNextMajorParentVersion in the report: 122 applications, 76 with an outcome.
     const withBlanks: RecipeReport = {
       recipeId: 'test',
       totalApplications: 122,
@@ -89,6 +88,14 @@ describe('computeSuccessRate', () => {
     };
     expect(computeSuccessRate(withBlanks)).toBeCloseTo(57.89, 2);
     console.log('  44 success, 32 fail, 122 total -> 57.9% (not 36.1%)');
+  });
+
+  it('reaches 100% when the unaccounted applications have no outcome', () => {
+    // UpgradeBomVersion in the report: 4 applications, 3 success, 0 fail.
+    const rate = computeSuccessRate({ successCount: 3, failureCount: 0 });
+    expect(rate).toBe(100);
+    expect(getRateTier(rate)).toBe('high');
+    console.log('  3 success, 0 fail, 4 total -> 100% (high)');
   });
 
   it('returns 0 when no application recorded an outcome', () => {
