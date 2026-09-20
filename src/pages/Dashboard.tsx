@@ -221,7 +221,7 @@ export default function Dashboard() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <DataFreshnessBanner generatedAt={data.generatedAt} />
       <StatCards overview={overview} />
-      <PullRequestCards pullRequests={data.pullRequests} />
+      {data.pullRequests && <PullRequestCards pullRequests={data.pullRequests} />}
       <ChartsRow migrationStatusOption={migrationStatusOption} topRecipesOption={topRecipesOption} />
       <TimelineTags timelineOption={timelineOption} tagsOption={tagsOption} />
       <TopFailingRecipes recipes={topFailingRecipes} />
