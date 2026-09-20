@@ -12,8 +12,6 @@ interface PullRequestCardsProps {
 }
 
 export default function PullRequestCards({ pullRequests }: PullRequestCardsProps) {
-  if (!pullRequests) return null;
-
   const { totalPRs, openPRs, closedPRs, mergedPRs } = pullRequests;
 
   return (
