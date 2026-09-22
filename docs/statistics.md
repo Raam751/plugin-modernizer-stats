@@ -46,11 +46,10 @@ plugin is on the latest parent, baseline or dependencies.
 
 ## Recipes
 
-Each recipe's success rate is its successful applications divided by its **total** applications, and
-recipes are grouped into high (80% or above), medium (50–79%) and low (under 50%). Some applications
-have no recorded outcome, and those count against the rate here. The dashboard's _Recipes with Most
-Failures_ card divides by successes plus failures instead, so a recipe with outcome-less applications
-reads higher there.
+Each recipe's success rate is its successful applications divided by the applications that **recorded
+an outcome**, and recipes are grouped into high (80% or above), medium (50–79%) and low (under 50%).
+Applications with no recorded outcome are left out of the denominator — `migrationStatus` was only
+added to the metadata in June 2025, so records from before then carry no outcome at all.
 
 Search matches the short recipe name — the part after the last dot — which is also what the list
 displays. The full id appears on hover.
