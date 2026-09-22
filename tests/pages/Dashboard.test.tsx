@@ -107,24 +107,24 @@ describe('Dashboard', () => {
     console.log('  Dashboard : all stat card labels rendered');
   });
 
-  it('renders pull request cards with values from the report', async () => {
+  it('renders pull request stats in the footer summary', async () => {
     renderDashboard();
 
     await waitFor(() => {
-      expect(screen.getByText('Total Pull Requests')).toBeDefined();
+      expect(screen.getByText(/Pull requests/)).toBeDefined();
     });
-    expect(screen.getByText('Open')).toBeDefined();
-    expect(screen.getByText('Merged')).toBeDefined();
-    expect(screen.getByText('Closed')).toBeDefined();
+    expect(screen.getByText(/Open/)).toBeDefined();
+    expect(screen.getByText(/Merged/)).toBeDefined();
+    expect(screen.getByText(/Closed/)).toBeDefined();
 
     expect(screen.getByText('693')).toBeDefined();
     expect(screen.getByText('78')).toBeDefined();
     expect(screen.getByText('583')).toBeDefined();
     expect(screen.getByText('32')).toBeDefined();
-    console.log('  Dashboard : PR cards show 693 total, 78 open, 583 merged, 32 closed');
+    console.log('  Dashboard : footer shows 693 pull requests, 78 open, 583 merged, 32 closed');
   });
 
-  it('omits the pull request cards when the report has no pullRequests block', async () => {
+  it('omits the pull request stats when the report has no pullRequests block', async () => {
     const { pullRequests, ...withoutPRs } = mockReport;
     void pullRequests;
     vi.stubGlobal(
@@ -137,8 +137,19 @@ describe('Dashboard', () => {
     await waitFor(() => {
       expect(screen.getByText('Total Plugins')).toBeDefined();
     });
-    expect(screen.queryByText('Total Pull Requests')).toBeNull();
-    console.log('  Dashboard : no PR cards when the report omits pullRequests');
+    expect(screen.queryByText(/Pull requests/)).toBeNull();
+    console.log('  Dashboard : no pull request stats when the report omits pullRequests');
+  });
+
+  it('does not repeat plugin and migration totals in the footer summary', async () => {
+    renderDashboard();
+
+    await waitFor(() => {
+      expect(screen.getByText('Total Plugins')).toBeDefined();
+    });
+    expect(screen.queryByText(/^Plugins:/)).toBeNull();
+    expect(screen.queryByText(/^Migrations:/)).toBeNull();
+    console.log('  Dashboard : footer no longer duplicates the plugin and migration stat cards');
   });
 
   it('renders data freshness banner', async () => {
