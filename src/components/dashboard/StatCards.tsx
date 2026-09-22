@@ -7,7 +7,7 @@ import CancelOutlined from '@mui/icons-material/CancelOutlined';
 import type { ReportJson } from '../../types';
 import { colors } from '../../theme';
 
-export const StatCard = ({
+const StatCard = ({
   title,
   value,
   icon,
